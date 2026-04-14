@@ -23,6 +23,12 @@ const savedSelectionKey = "loreal-selected-products";
 let currentCategory = "";
 let currentSearch = "";
 
+/* Read Worker URL safely so missing secrets.js does not crash the app */
+const workerEndpoint =
+  (typeof OPENAI_API_KEY !== "undefined" && OPENAI_API_KEY) ||
+  (typeof window !== "undefined" && window.OPENAI_API_KEY) ||
+  "";
+
 /* Store full conversation so follow-up answers stay contextual */
 const chatMessages = [
   {
@@ -350,7 +356,7 @@ async function getOpenAIResponse(messageText) {
     { role: "user", content: messageText },
   ];
 
-  const response = await fetch(OPENAI_API_KEY, {
+  const response = await fetch(workerEndpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -381,7 +387,7 @@ async function getOpenAIResponse(messageText) {
 
 /* Build first routine from selected products */
 generateRoutineBtn.addEventListener("click", async () => {
-  if (!OPENAI_API_KEY || !OPENAI_API_KEY.startsWith("http")) {
+  if (!workerEndpoint || !workerEndpoint.startsWith("http")) {
     chatWindow.textContent =
       "Add your Cloudflare Worker URL in secrets.js first.";
     return;
@@ -429,7 +435,7 @@ chatForm.addEventListener("submit", async (e) => {
   const message = userInput.value.trim();
   if (!message) return;
 
-  if (!OPENAI_API_KEY || !OPENAI_API_KEY.startsWith("http")) {
+  if (!workerEndpoint || !workerEndpoint.startsWith("http")) {
     chatWindow.innerHTML =
       "Add your Cloudflare Worker URL in secrets.js first.";
     return;
