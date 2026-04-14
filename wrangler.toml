@@ -1,0 +1,6 @@
+name = "loreal-routine-search-worker"
+main = "worker.js"
+compatibility_date = "2026-04-13"
+
+[vars]
+# Set your OpenAI key with `wrangler secret put OPENAI_API_KEY`
